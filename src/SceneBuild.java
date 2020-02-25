@@ -34,11 +34,7 @@ public class SceneBuild extends Application {
         mylabel.setText("Select Problem:");
         // Initialize buttons and button events, create three separate buttons for the three problems
         Button p1button = new Button();
-        Button p2button = new Button();
-        Button p3button = new Button();
         p1button.setText("Partition-based Scheme");
-        p2button.setText("Working Set Location Scheme");
-        p3button.setText("Forwarding Pointers");
 
         p1button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
