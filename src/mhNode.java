@@ -17,12 +17,13 @@ public class mhNode {
     Line nodeLine;
     String name;
 
+    // TODO: ADD HANDLING FOR MAKING REQUESTS AND PROCESSING TOKEN
+
     // Constructor for partNode without given initial XY position.
     mhNode(int nodeNum,int nodeX,int nodeY, Group nodeGroup){
 
-        this.name = name;
-        this.nodeX = 200;
-        this.nodeY = 50;
+        this.nodeX = nodeX;
+        this.nodeY = nodeY;
         this.nodeNum = nodeNum;
         this.nodeText = new Text();
         nodeText.setText("" + this.nodeNum);
@@ -35,15 +36,11 @@ public class mhNode {
     // Initialize node circle shape and color.
     public void initCircle(Group nodeGroup){
 
-        this.nodeCircle = new Circle(nodeX,nodeY,10);
-        this.nodeColor = Color.GREEN; // Standard color for standard node.
-
-        // Make root node a special color
-        if(this.name == "root"){
-            this.nodeColor = Color.BLUE;
-        }
-
+        nodeCircle = new Circle(nodeX,nodeY,10);
+        nodeColor = Color.GREEN; // Standard color for standard node.
         nodeCircle.setFill(nodeColor);
+        nodeGroup.getChildren().add(nodeCircle);
+        nodeGroup.getChildren().add(nodeText);
 
     }
 

@@ -30,8 +30,8 @@ public class SceneBuild extends Application {
     @Override
     public void start(Stage primaryStage) {
         // Initialize labels
-        Label problemlabel = new Label();
-        problemlabel.setText("Select Problem:");
+        Label problemLabel = new Label();
+        problemLabel.setText("Select Problem:");
         // Initialize buttons and button events
         Button p1button = new Button();
         p1button.setText("MSS Queue Scheme");
@@ -43,19 +43,19 @@ public class SceneBuild extends Application {
             }
         });
 
-        // Setup gridpane with children for main scene
+        // Setup gridPane with children for main scene
         GridPane gridPane = new GridPane();
         gridPane.setMinSize(400,200);
         gridPane.setPadding(new Insets(10,10,10,10));
         gridPane.setVgap(5);
         gridPane.setHgap(5);
         gridPane.setAlignment(Pos.CENTER);
-        gridPane.add(problemlabel,0,0);
+        gridPane.add(problemLabel,0,0);
         gridPane.add(p1button,0,1);
 
         // Setup scene and window parameters
         Scene s = new Scene(gridPane);
-        primaryStage.setTitle("Homework #1");
+        primaryStage.setTitle("Homework #2");
         primaryStage.setScene(s);
         primaryStage.show();
     }
@@ -65,7 +65,7 @@ public class SceneBuild extends Application {
     // Problem 1: Create partition scheme.
     public void p1solution(){
         int globalPosX = 900;
-        int globalPosY = 250;
+        int globalPosY = 500;
 
         Stage p1stage = new Stage();
 
@@ -74,45 +74,60 @@ public class SceneBuild extends Application {
         Label requestLabel = new Label("Grant Request");
         Button grantButton = new Button("Grant");
 
-        GridPane settingsgrid = new GridPane();
+        GridPane settingsGrid = new GridPane();
 
-        settingsgrid.add(inLabel,0,0);
-        settingsgrid.add(requestLabel,0,1);
-        settingsgrid.add(grantButton,0,2);
-        settingsgrid.setAlignment(Pos.TOP_LEFT);
+        settingsGrid.add(inLabel,0,0);
+        settingsGrid.add(requestLabel,0,1);
+        settingsGrid.add(grantButton,0,2);
+        settingsGrid.setAlignment(Pos.TOP_LEFT);
 
         Group p1Group = new Group();
 
         // Setup MSSs and MHs for each
 
-        // TODO: SETUP INITIAL MSS AND MHS (10XMSS,3XMH/MSS)
 
-        // Update caller node position on user update.
+        int numMSS = 10, numMH = 3,mssY = 250, mssInitX = (globalPosX/numMSS) - 10, mhShift = 30;
+
+        mssNode logicalMSSs[] = new mssNode[numMSS];
+        int mhNum = 0;
+
+        for(int i = 0; i < logicalMSSs.length; i++){
+
+            logicalMSSs[i] = new mssNode(i,mssInitX * (i + 1),mssY,p1Group);
+
+            for(int j = 0; j < numMH; j++){
+
+                mhNode workingMH = new mhNode(mhNum, mssInitX * (i + 1), mssY - (j + 1) * mhShift, p1Group);
+                logicalMSSs[i].addMH(workingMH);
+                mhNum++;
+            }
+
+        }
+
+        // TODO: SETUP VISUAL QUEUE WITH REQUESTS BELOW EACH MSS
+
+        // Grant request of a MH
         grantButton.setOnKeyPressed(new EventHandler<KeyEvent>() {
 
             @Override
             public void handle(KeyEvent event) {
-                if(event.getCode().equals(KeyCode.ENTER)) {
-                    // Grant the new request for the hosts.
+                // Grant the new request for the hosts.
 
-                    //TODO: GRANT MH REQUEST AFTER UPDATING GLOBAL PRIORITY
+                //TODO: GRANT MH REQUEST AFTER UPDATING GLOBAL PRIORITY
+                //TODO: ADD TOKEN CLASS?
 
 
-                }
             }
         });
 
-
         // Update and display scene.
-        p1Group.getChildren().add(settingsgrid);
+        p1Group.getChildren().add(settingsGrid);
         Scene mys = new Scene(p1Group, globalPosX , globalPosY);
         p1stage.setScene(mys);
         p1stage.setTitle("Problem #1 Solution");
         p1stage.show();
 
     }
-
-
 
     // END SECONDARY FUNCTIONS
 
