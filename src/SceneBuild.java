@@ -117,8 +117,7 @@ public class SceneBuild extends Application {
                 //TODO: GRANT MH REQUEST AFTER UPDATING GLOBAL PRIORITY
                 //TODO: ADD TOKEN CLASS?
 
-                // testing requests
-
+                // testing requests, can remove with token ring logic implementation
                 logicalMSSs[0].addMHRequest(logicalMSSs[0].mhList.get(0));
                 logicalMSSs[0].addMHRequest(logicalMSSs[0].mhList.get(1));
                 logicalMSSs[0].addMHRequest(logicalMSSs[0].mhList.get(2));
