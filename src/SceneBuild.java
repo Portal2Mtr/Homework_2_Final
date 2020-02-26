@@ -86,7 +86,7 @@ public class SceneBuild extends Application {
         // Setup MSSs and MHs for each
 
 
-        int numMSS = 10, numMH = 3,mssY = 250, mssInitX = (globalPosX/numMSS) - 10, mhShift = 30;
+        int numMSS = 10, numMH = 3,mssY = 150, mssInitX = (globalPosX/numMSS) - 10, mhShift = 30;
 
         mssNode logicalMSSs[] = new mssNode[numMSS];
         int mhNum = 0;
@@ -94,29 +94,38 @@ public class SceneBuild extends Application {
         for(int i = 0; i < logicalMSSs.length; i++){
 
             logicalMSSs[i] = new mssNode(i,mssInitX * (i + 1),mssY,p1Group);
+            logicalMSSs[i].initQueue(p1Group);
 
             for(int j = 0; j < numMH; j++){
 
                 mhNode workingMH = new mhNode(mhNum, mssInitX * (i + 1), mssY - (j + 1) * mhShift, p1Group);
                 logicalMSSs[i].addMH(workingMH);
+                workingMH.setMhMSS(logicalMSSs[i]);
                 mhNum++;
             }
 
         }
 
-        // TODO: SETUP VISUAL QUEUE WITH REQUESTS BELOW EACH MSS
+        // TODO: SETUP RANDOMIZED INITIAL REQUESTS?
 
-        // Grant request of a MH
-        grantButton.setOnKeyPressed(new EventHandler<KeyEvent>() {
 
+        grantButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(KeyEvent event) {
+            public void handle(ActionEvent actionEvent) {
                 // Grant the new request for the hosts.
 
                 //TODO: GRANT MH REQUEST AFTER UPDATING GLOBAL PRIORITY
                 //TODO: ADD TOKEN CLASS?
 
+                // testing requests
 
+                logicalMSSs[0].addMHRequest(logicalMSSs[0].mhList.get(0));
+                logicalMSSs[0].addMHRequest(logicalMSSs[0].mhList.get(1));
+                logicalMSSs[0].addMHRequest(logicalMSSs[0].mhList.get(2));
+
+
+                for (int i = 0; i < logicalMSSs.length; i++)
+                    logicalMSSs[i].updateQueue();
             }
         });
 

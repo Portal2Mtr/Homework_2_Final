@@ -14,8 +14,8 @@ public class mhNode {
     Circle nodeCircle;
     Color nodeColor;
     Text nodeText;
-    Line nodeLine;
-    String name;
+    mssNode mhMSS;
+    int mh_count;
 
     // TODO: ADD HANDLING FOR MAKING REQUESTS AND PROCESSING TOKEN
 
@@ -30,6 +30,8 @@ public class mhNode {
         nodeText.setX(this.nodeX - 5);
         nodeText.setY(this.nodeY + 5);
         initCircle(nodeGroup);
+
+        mh_count = 0;
 
     }
 
@@ -57,4 +59,18 @@ public class mhNode {
 
     }
 
+    public void setMhMSS(mssNode mhMSS) {
+        this.mhMSS = mhMSS;
+    }
+
+    public int[] sendRequest(){
+
+        int [] mhRequest = new int[2];
+
+        mhRequest[0] = this.nodeNum;
+        mhRequest[1] = this.mh_count++;
+
+        return mhRequest;
+
+    }
 }

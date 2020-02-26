@@ -1,10 +1,12 @@
 import javafx.scene.Group;
+import javafx.scene.control.Label;
 import javafx.scene.shape.Circle;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
+import javafx.scene.text.Font;
 
-import java.util.ArrayList;
+import java.util.*;
 
 // This class handles each node on the tree structure along with their XY coordinates and shape.
 public class mssNode {
@@ -16,6 +18,11 @@ public class mssNode {
     Color nodeColor;
     Text nodeText;
     ArrayList<mhNode> mhList;
+    Queue<mhRequestLog> mssQueue;
+    Label queueDesc;
+    Label queueLabel;
+    String queueString;
+
 
     // TODO: ADD QUEUE FOR REQUESTS AND CHILD MHS
 
@@ -34,9 +41,11 @@ public class mssNode {
 
         // Setup Logic vars
         mhList = new ArrayList<>();
-
+        mssQueue = new LinkedList<>();
+        queueString = "EMPTY!";
+        queueLabel = new Label(queueString);
+        queueDesc = new Label("|H H_N D? P_N|");
     }
-
     // Initialize node circle shape and color.
     public void initCircle(Group nodeGroup){
 
@@ -66,5 +75,66 @@ public class mssNode {
         mhList.add(workingNode);
 
     }
+
+    // TODO: ADD FUNCTION TO INITIALIZE REQUESTS NUMBERS FROM ALL MHS (RANDOMLY?)
+
+    public void addMHRequest(mhNode requestNode){
+
+        mhRequestLog newRequest = new mhRequestLog(requestNode.sendRequest());
+
+        //TODO: UPDATE PRIORITY NUM BASED ON MAX FROM ALL MSS
+
+        mssQueue.add(newRequest);
+
+    }
+
+    public void initQueue(Group p1Group){
+
+        p1Group.getChildren().add(queueDesc);
+        queueDesc.setLayoutX(this.nodeX - 30);
+        queueDesc.setLayoutY(this.nodeY + 10);
+
+        p1Group.getChildren().add(queueLabel);
+        queueLabel.setLayoutX(this.nodeX - 30);
+        queueLabel.setLayoutY(this.nodeY + 30);
+
+    }
+
+    public void updateQueue(){
+
+        queueString = "";
+
+        if(mssQueue.isEmpty()) {
+            queueString = "EMPTY!";
+        }else {
+
+            Object[] workingList  = mssQueue.toArray();
+
+
+            for (int i = 0; i < mssQueue.size(); i++){
+
+                mhRequestLog workingRequest = (mhRequestLog) workingList[i];
+
+
+                queueString += " " + workingRequest.mhRequest[0];
+                queueString += "  " + workingRequest.mhRequest[1];
+
+                if(workingRequest.isDeliv){
+                    queueString += "      T";
+                }else{
+                    queueString += "      F";
+                }
+
+                queueString += "    " + workingRequest.priorityNum + "\n";
+
+            }
+
+        }
+
+        queueLabel.setText(queueString);
+
+    }
+
+
 
 }
