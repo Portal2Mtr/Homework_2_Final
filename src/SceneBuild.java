@@ -274,6 +274,15 @@ public class SceneBuild extends Application {
         logicalMSSs[globalToken.MSSLoc].setHasToken(true);
     }
 
+    // Deletes the given request from each of the MSSs...
+    void globalDeleteRequest(mhRequestLog deleteRequest){
+
+        for(int i = 0; i < logicalMSSs.length; i++){
+            logicalMSSs[i].deleteRequest(deleteRequest);
+        }
+
+    }
+
 
     // END SECONDARY FUNCTIONS
 
