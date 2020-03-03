@@ -2,6 +2,7 @@
  * Created by Miner on 1/30/2020.
  */
 
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -15,6 +16,7 @@ import javafx.geometry.Insets;
 import javafx.stage.Stage;
 import javafx.scene.*;
 import javafx.scene.input.*;
+import javafx.util.Duration;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -118,12 +120,17 @@ public class SceneBuild extends Application {
         }
 
         // Setup 15 'randomized' initial requests from MHs...
-        int numInitReq = 15;
+        int numInitReq = 5;
         initRandRequest(numInitReq);
 
         // Initialize token...
         globalToken = new token(logicalMSSs.length);
         logicalMSSs[globalToken.MSSLoc].setHasToken(true);
+
+        PauseTransition pause = new PauseTransition(
+                Duration.seconds(1)
+        );
+        pause.setOnFinished(event -> moveToken());
 
         grantButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -136,6 +143,7 @@ public class SceneBuild extends Application {
                     if (logicalMSSs[globalToken.MSSLoc].canGrantRequest(globalToken)) {
                         // MH is here! grant the MH request and delete it from all other MSSs...
                         mhRequestLog deleteRequest = logicalMSSs[globalToken.MSSLoc].grantRequest(globalToken);
+                        globalToken.incPriorCnt();
                         globalDeleteRequest(deleteRequest);
 
                         //Move token to next MSS...
@@ -147,11 +155,8 @@ public class SceneBuild extends Application {
                         moveToken();
 
                         // Add visual delay to show token moving
-                        try {
-                            Thread.sleep(1000);
-                        } catch(InterruptedException ex) {
-                            Thread.currentThread().interrupt();
-                        }
+//                        pause.play();
+                        // TODO: 'animation' not working
 
                     }
 
@@ -247,21 +252,24 @@ public class SceneBuild extends Application {
     // Finds the global priority for a new request and sends it to all MSSs
     void globalMSSUpdate(mssNode recievingMSS){
 
-        mhRequestLog newRequest = recievingMSS.mssQueue.peek();
+        // Get last added request from queue...
+        Object[] workingList  = recievingMSS.mssQueue.toArray();
+        mhRequestLog newRequest = (mhRequestLog) workingList[recievingMSS.mssQueue.size() - 1];
 
-        Integer globalPrior[] = new Integer[logicalMSSs.length];
+        ArrayList<Integer> globalPrior = new ArrayList<Integer>();
 
-        // Have each MSS find their max temporary request number for the new request...
+        // Have each MSS besides M find their max temporary request number for the new request...
         for(int i = 0; i < logicalMSSs.length; i++){
-            globalPrior[i] = logicalMSSs[i].addAndFindMax(newRequest);
+            if(!logicalMSSs[i].equals(recievingMSS))
+                globalPrior.add(logicalMSSs[i].addAndFindMax(newRequest));
         }
 
         // Find the max of the new temporary requests...
-        int newPrior = Collections.max(Arrays.asList(globalPrior));
+        int newPrior = Collections.max(globalPrior);
 
         // Send the new global max to each of the MSSs, have them resort their queues...
         for(int i = 0; i < logicalMSSs.length; i++){
-            logicalMSSs[i].updateGlobalRequest(newRequest,newPrior);
+            logicalMSSs[i].updateGlobalRequest(newPrior, newRequest);
             logicalMSSs[i].resortQueue();
         }
 

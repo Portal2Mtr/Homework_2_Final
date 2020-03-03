@@ -9,7 +9,7 @@ public class token {
     token(int maxNumMSS){
 
         loopCount = 0;
-        priorityCount = 0;
+        priorityCount = 1;
         MSSLoc = 0; // Start token at MSS #0
         this.maxNumMSS = maxNumMSS - 1;
 

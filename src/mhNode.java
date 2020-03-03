@@ -17,8 +17,6 @@ public class mhNode {
     mssNode mhMSS;
     int mh_count;
 
-    // TODO: ADD HANDLING FOR MAKING REQUESTS AND PROCESSING TOKEN
-
     // Constructor for partNode without given initial XY position.
     mhNode(int nodeNum,int nodeX,int nodeY, Group nodeGroup){
 
