@@ -8,7 +8,7 @@ import javafx.scene.text.Font;
 
 import java.util.*;
 
-// This class handles each node on the tree structure along with their XY coordinates and shape.
+// This class handles each MSS node with their XY coordinates and shape.
 public class mssNode {
 
     int nodeNum;
@@ -22,9 +22,7 @@ public class mssNode {
     Label queueDesc;
     Label queueLabel;
     String queueString;
-
-
-    // TODO: ADD QUEUE FOR REQUESTS AND CHILD MHS
+    boolean hasToken;
 
     // Constructor for partNode without given initial XY position.
     mssNode(int nodeNum,int nodeX,int nodeY, Group nodeGroup){
@@ -75,8 +73,6 @@ public class mssNode {
         mhList.add(workingNode);
 
     }
-
-    // TODO: ADD FUNCTION TO INITIALIZE REQUESTS NUMBERS FROM ALL MHS (RANDOMLY?)
 
     public void addMHRequest(mhNode requestNode){
 
@@ -135,6 +131,16 @@ public class mssNode {
 
     }
 
+    public void setHasToken(boolean hasToken) {
+        this.hasToken = hasToken;
+
+        if(hasToken){
+            this.nodeColor = Color.GOLD;
+        }else{
+            this.nodeColor = Color.GREEN;
+        }
 
 
+
+    }
 }

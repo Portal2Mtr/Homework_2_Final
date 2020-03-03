@@ -4,7 +4,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 
-// This class handles each node on the tree structure along with their XY coordinates and shape.
+// This class handles each MH node along with their XY coordinates and shape.
 public class mhNode {
 
     // General node vars.

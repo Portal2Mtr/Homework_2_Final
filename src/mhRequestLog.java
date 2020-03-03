@@ -1,3 +1,4 @@
+// Class used to organize each MH request...
 public class mhRequestLog {
 
     int [] mhRequest;
