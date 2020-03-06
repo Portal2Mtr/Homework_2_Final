@@ -272,6 +272,40 @@ public class mssNode {
         // Sort Requests based on priority number in ascending order...
         Arrays.sort(workingRequests);
 
+        // If new request for MH comes in that is less than one of the repeated request from another MH, resort...
+        for(int i = 0; i < (mssQueue.size()-1); i++){
+
+            for(int j = 0; j < (mssQueue.size()-i-1);j++) {
+
+                if (workingRequests[j].mhRequest[1] > workingRequests[j + 1].mhRequest[1]) {
+
+                    mhRequestLog temp = workingRequests[j];
+                    workingRequests[j] = workingRequests[j + 1];
+                    workingRequests[j + 1] = temp;
+
+                }
+            }
+
+        }
+
+        // Renumber bubble sorted requests for single mislabelled request
+
+        for(int i = 0; i < (mssQueue.size()-1);i++){
+
+            if((workingRequests[i].priorityNum+1) < workingRequests[i+1].priorityNum){
+
+                for(int j = i+1; j < mssQueue.size(); j++){
+
+                    workingRequests[j].priorityNum = workingRequests[j-1].priorityNum+1;
+
+                }
+                // Do it once
+                break;
+
+            }
+
+        }
+
         // Empty mssQueue
         while(!mssQueue.isEmpty())
             mssQueue.poll();

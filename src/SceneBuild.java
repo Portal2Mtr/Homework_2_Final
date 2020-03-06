@@ -18,6 +18,7 @@ import javafx.scene.*;
 import javafx.scene.input.*;
 import javafx.util.Duration;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -71,6 +72,9 @@ public class SceneBuild extends Application {
     int maxMHNum = numMSS * numMH - 1;
     mssNode logicalMSSs[] = new mssNode[numMSS];
     token globalToken;
+    int movingMHNum;
+    int movingMSSNum;
+    int mhShift = 30;
 
     public void p1solution(){
         int globalPosX = 900;
@@ -84,6 +88,10 @@ public class SceneBuild extends Application {
         Label selectLabel = new Label("MH Request #:");
         TextField MHField = new TextField("0");
         Button requestButton = new Button("Make Request");
+        Label moveLabel = new Label("Move MH");
+        TextField moveMHField = new TextField("0");
+        TextField moveMSSField = new TextField("1");
+        Button moveButton = new Button("Move!");
 
         GridPane settingsGrid = new GridPane();
 
@@ -92,6 +100,10 @@ public class SceneBuild extends Application {
         settingsGrid.add(selectLabel,0,2);
         settingsGrid.add(MHField,0,3);
         settingsGrid.add(requestButton,0,4);
+        settingsGrid.add(moveLabel,0,5);
+        settingsGrid.add(moveMHField,0,6);
+        settingsGrid.add(moveMSSField,1,6);
+        settingsGrid.add(moveButton,0,7);
 
         settingsGrid.setAlignment(Pos.TOP_LEFT);
 
@@ -101,7 +113,7 @@ public class SceneBuild extends Application {
         requestingMHNum = 0;
 
         // Setup MSSs and MHs for each
-        int mssY = 250, mssInitX = (globalPosX/numMSS) - 10, mhShift = 30;
+        int mssY = 350, mssInitX = (globalPosX/numMSS) - 10;
         int mhNum = 0;
 
         for(int i = 0; i < logicalMSSs.length; i++){
@@ -119,18 +131,13 @@ public class SceneBuild extends Application {
 
         }
 
-        // Setup 15 'randomized' initial requests from MHs...
+        // Setup 'randomized' initial requests from MHs...
         int numInitReq = 5;
         initRandRequest(numInitReq);
 
         // Initialize token...
         globalToken = new token(logicalMSSs.length);
         logicalMSSs[globalToken.MSSLoc].setHasToken(true);
-
-        PauseTransition pause = new PauseTransition(
-                Duration.seconds(1)
-        );
-        pause.setOnFinished(event -> moveToken());
 
         grantButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -147,16 +154,12 @@ public class SceneBuild extends Application {
                         globalDeleteRequest(deleteRequest);
 
                         //Move token to next MSS...
-                        moveToken();
+//                        moveToken();
                         break;
 
                     }else{
                         // MH is not here... move on to the next MSS...
                         moveToken();
-
-                        // Add visual delay to show token moving
-//                        pause.play();
-                        // TODO: 'animation' not working
 
                     }
 
@@ -187,6 +190,50 @@ public class SceneBuild extends Application {
                 mhNode requestingMH = findMHByNum(requestingMHNum);
                 requestingMH.mhMSS.addMHRequest(requestingMH);
                 globalMSSUpdate(requestingMH.mhMSS);
+                updateMSSQueues();
+            }
+        });
+
+        // Update caller node position on user update.
+        moveMHField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+            @Override
+            public void handle(KeyEvent event) {
+                if(event.getCode().equals(KeyCode.ENTER)) {
+                    // Get new caller position.
+                    movingMHNum = Integer.parseInt(moveMHField.getText());
+
+                }
+            }
+        });
+
+        // Update caller node position on user update.
+        moveMSSField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+            @Override
+            public void handle(KeyEvent event) {
+                if(event.getCode().equals(KeyCode.ENTER)) {
+                    // Get new caller position.
+                    movingMSSNum = Integer.parseInt(moveMSSField.getText());
+
+                }
+            }
+        });
+
+        moveButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                // Move a host to a new MSS
+
+                mhNode moveMHNode =findMHByNum(movingMHNum);
+                mssNode oldMSSNode = moveMHNode.mhMSS;
+                mssNode newMSSNode = logicalMSSs[movingMSSNum];
+                moveMHNode.mhMSS = newMSSNode;
+
+                oldMSSNode.mhList.remove(moveMHNode);
+                newMSSNode.mhList.add(moveMHNode);
+                moveMHNode.setNodeXY(newMSSNode.nodeX,mssY - (newMSSNode.mhList.size()) * mhShift);
+
                 updateMSSQueues();
             }
         });
